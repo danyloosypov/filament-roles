@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PostResource\Pages;
 use App\Filament\Resources\PostResource\RelationManagers;
+use App\Filament\Resources\PostResource\Widgets\StatsOverview;
 use App\Models\Post;
 use Filament\Forms;
 use Filament\Forms\Components\BelongsToSelect;
@@ -14,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -22,6 +24,9 @@ use Illuminate\Support\Str;
 class PostResource extends Resource
 {
     protected static ?string $model = Post::class;
+
+    protected static ?string $recordTitleAttribute = 'title';
+
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
@@ -56,7 +61,7 @@ class PostResource extends Resource
                 SpatieMediaLibraryImageColumn::make('thumbnail')->collection('posts'),
             ])
             ->filters([
-                //
+                SelectFilter::make('category')->relationship('category', 'name'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -71,6 +76,12 @@ class PostResource extends Resource
     {
         return [
             //
+        ];
+    }
+
+    public static function getWidgets(): array {
+        return [
+            StatsOverview::class,
         ];
     }
     
